@@ -1,0 +1,359 @@
+
+<!DOCTYPE html>
+<html lang="ar" dir="rtl">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<title>دليل محاسبة التكاليف</title>
+<style>
+:root{--blue:#174ea6;--bg:#f3f6fb;--line:#dce4ef}
+*{box-sizing:border-box}
+body{margin:0;font-family:Tahoma,Arial,sans-serif;background:var(--bg);color:#172033;line-height:1.9}
+header{background:linear-gradient(120deg,#12356d,#2873c7);color:white;padding:30px 18px}
+.container{max-width:1050px;margin:auto;padding:0 16px}
+h1{margin:0;font-size:30px}
+header p{color:#e4edff}
+input,button{font:inherit;padding:10px;border-radius:8px}
+input{border:1px solid #bdc9dc;width:100%;margin:4px 0 12px}
+button{border:0;background:var(--blue);color:white;cursor:pointer}
+header input{max-width:650px;background:white}
+nav,.card,.calculator{background:white;border:1px solid var(--line);border-radius:12px;padding:18px;margin:18px 0}
+nav a{display:inline-block;color:var(--blue);text-decoration:none;margin:4px 10px}
+h2{color:var(--blue);font-size:22px;margin-top:0}
+h3{color:#24528a}
+.formula{background:#f3f7fd;padding:10px 13px;border-radius:7px;margin:8px 0}
+.example{background:#eef9f3;border-right:4px solid #24966a;padding:12px;margin:12px 0;border-radius:6px}
+.note{background:#fff5df;padding:12px;border-right:4px solid #e0a12a}
+.grid{display:grid;grid-template-columns:repeat(2,minmax(0,1fr));gap:12px}
+.result{background:#eaf8f0;padding:12px;margin:12px 0;border-radius:8px;white-space:pre-line}
+.small{color:#667085;font-size:14px}
+footer{text-align:center;padding:25px}
+@media(max-width:650px){.grid{grid-template-columns:1fr}h1{font-size:24px}}
+@media print{header button,nav,.calculator button,#search{display:none}body{background:white}.card,.calculator{break-inside:avoid}}
+</style>
+</head>
+<body>
+<header>
+<div class="container">
+<h1>دليل محاسبة التكاليف</h1>
+<p>قوانين محاسبة التكاليف مع أمثلة عملية وحاسبات للمخزون والمصانع.</p>
+<input id="search" placeholder="ابحث عن قانون أو كلمة مثل مخزون أو أجور..." oninput="searchSections()">
+<button onclick="window.print()">طباعة / حفظ PDF</button>
+</div>
+</header>
+
+<div class="container">
+<nav>
+<b>الأقسام:</b>
+<a href="#inventory">المخزون</a>
+<a href="#basic">أساسيات التكاليف</a>
+<a href="#materials">المواد والمخازن</a>
+<a href="#labor">الأجور</a>
+<a href="#overhead">التكاليف غير المباشرة</a>
+<a href="#production">الإنتاج</a>
+<a href="#breakeven">نقطة التعادل</a>
+<a href="#budget">الموازنات</a>
+<a href="#variance">الانحرافات</a>
+<a href="#abc">ABC</a>
+<a href="#valuation">تقييم المخزون</a>
+<a href="#decisions">القرارات</a>
+<a href="#pricing">التسعير</a>
+<a href="#control">الرقابة</a>
+</nav>
+
+<section class="calculator searchable" id="inventory">
+<h2>حاسبات المخزون العملية</h2>
+
+<h3>1. المخزون الحالي يكفي كام يوم؟</h3>
+<div class="grid">
+<div>كمية المخزون الحالية<input id="stock" type="number" value="1500" min="0"></div>
+<div>متوسط الاستهلاك اليومي<input id="dailyUse" type="number" value="50" min="0.0001"></div>
+</div>
+<button onclick="duration()">احسب مدة كفاية المخزون</button>
+<div id="r1" class="result"></div>
+<div class="formula">مدة كفاية المخزون = كمية المخزون المتاحة ÷ متوسط الاستهلاك خلال الفترة.</div>
+<div class="example">مثال: 1,500 وحدة ÷ 50 وحدة يوميًا = 30 يومًا.</div>
+
+<h3>2. حساب متوسط الاستهلاك الفعلي</h3>
+<div class="grid">
+<div>إجمالي الكمية المستهلكة<input id="used" type="number" value="1800" min="0"></div>
+<div>عدد أيام الفترة<input id="days" type="number" value="30" min="0.0001"></div>
+</div>
+<button onclick="averageUse()">احسب متوسط الاستهلاك</button>
+<div id="r2" class="result"></div>
+<div class="formula">متوسط الاستهلاك اليومي = إجمالي الكمية المستهلكة ÷ عدد الأيام.</div>
+
+<h3>3. نقطة إعادة الطلب ومخزون الأمان</h3>
+<div class="grid">
+<div>متوسط الاستهلاك اليومي<input id="demand" type="number" value="100" min="0"></div>
+<div>متوسط مدة التوريد بالأيام<input id="lead" type="number" value="5" min="0"></div>
+<div>كمية مخزون الأمان<input id="safety" type="number" value="150" min="0"></div>
+<div>أقصى استهلاك يومي (اختياري)<input id="maxDemand" type="number" value="130" min="0"></div>
+<div>أقصى مدة توريد بالأيام (اختياري)<input id="maxLead" type="number" value="7" min="0"></div>
+</div>
+<button onclick="reorder()">احسب نقطة إعادة الطلب</button>
+<div id="r3" class="result"></div>
+<div class="formula">نقطة إعادة الطلب الأساسية = متوسط الاستهلاك اليومي × مدة التوريد.</div>
+<div class="formula">نقطة إعادة الطلب مع مخزون الأمان = الاستهلاك خلال مدة التوريد + مخزون الأمان.</div>
+<div class="formula">مخزون الأمان بطريقة الحد الأقصى = (أقصى استهلاك × أقصى مدة توريد) − (متوسط الاستهلاك × متوسط مدة التوريد).</div>
+
+<h3>4. فترة الأمان: المخزون الاحتياطي يكفي كام يوم؟</h3>
+<div class="grid">
+<div>كمية مخزون الأمان<input id="safetyQty" type="number" value="300" min="0"></div>
+<div>متوسط الاستهلاك اليومي<input id="safetyUse" type="number" value="60" min="0.0001"></div>
+</div>
+<button onclick="safetyDuration()">احسب فترة الأمان</button>
+<div id="r4" class="result"></div>
+<div class="example">مثال: مخزون أمان 300 وحدة ÷ استهلاك 60 وحدة يوميًا = 5 أيام.</div>
+
+<div class="note">
+<b>مهم:</b> مدة كفاية المخزون تخص الكمية المتاحة كلها. فترة الأمان تخص مخزون الأمان فقط. أما نقطة إعادة الطلب فهي مستوى المخزون الذي تبدأ عنده إجراءات الشراء.
+</div>
+</section>
+
+<section class="card searchable" id="basic">
+<h2>1. قوانين عناصر التكاليف</h2>
+<div class="formula">إجمالي التكاليف = التكاليف الثابتة + التكاليف المتغيرة.</div>
+<div class="formula">إجمالي التكاليف الصناعية = مواد مباشرة + أجور مباشرة + تكاليف صناعية غير مباشرة.</div>
+<div class="formula">التكاليف الأولية = المواد المباشرة + الأجور المباشرة.</div>
+<div class="formula">تكاليف التحويل = الأجور المباشرة + التكاليف الصناعية غير المباشرة.</div>
+<div class="formula">تكلفة الوحدة = إجمالي التكلفة ÷ عدد الوحدات المنتجة.</div>
+<div class="formula">التكلفة المتغيرة الكلية = التكلفة المتغيرة للوحدة × عدد الوحدات.</div>
+<div class="formula">التكلفة الكلية = التكاليف الثابتة + التكلفة المتغيرة الكلية.</div>
+<div class="formula">متوسط التكلفة الثابتة للوحدة = التكاليف الثابتة ÷ عدد الوحدات.</div>
+<div class="example">مثال: مواد مباشرة 10,000، أجور مباشرة 5,000، وتكاليف صناعية غير مباشرة 5,000 جنيه. التكاليف الأولية = 15,000 جنيه، وتكاليف التحويل = 10,000 جنيه، وإجمالي التكاليف الصناعية = 20,000 جنيه. لو الإنتاج 1,000 وحدة، تكلفة الوحدة = 20 جنيهًا.</div>
+</section>
+
+<section class="card searchable" id="materials">
+<h2>2. قوانين المواد والمخازن</h2>
+<div class="formula">المواد المتاحة للاستخدام = مخزون أول المدة + صافي المشتريات.</div>
+<div class="formula">صافي المشتريات = المشتريات + مصاريف الشراء − المردودات والخصومات.</div>
+<div class="formula">المواد المستخدمة = مخزون أول المدة + صافي المشتريات − مخزون آخر المدة.</div>
+<div class="formula">المواد المباشرة المستخدمة = إجمالي المواد المستخدمة − المواد غير المباشرة المستخدمة.</div>
+<div class="formula">نقطة إعادة الطلب = متوسط الاستخدام خلال مدة التوريد + مخزون الأمان.</div>
+<div class="formula">متوسط المخزون البسيط = (مخزون أول المدة + مخزون آخر المدة) ÷ 2.</div>
+<div class="formula">معدل دوران المخزون = تكلفة المواد المستخدمة ÷ متوسط مخزون المواد.</div>
+<div class="formula">متوسط فترة الاحتفاظ = أيام الفترة ÷ معدل دوران المخزون.</div>
+<div class="formula">كمية الطلب الاقتصادية EOQ = الجذر التربيعي لـ (2 × الطلب السنوي × تكلفة الطلب ÷ تكلفة الاحتفاظ بالوحدة سنويًا).</div>
+<div class="formula">الحد الأقصى للمخزون بصيغة شائعة = مستوى إعادة الطلب + كمية الطلب − (أقل استخدام × أقل مدة توريد).</div>
+<div class="example">مثال: مخزون أول المدة 2,000 جنيه، مشتريات صافية 8,000، ومخزون آخر المدة 3,000. المواد المستخدمة = 2,000 + 8,000 − 3,000 = 7,000 جنيه.</div>
+<div class="example">مثال: الاستهلاك اليومي 100 وحدة ومدة التوريد 5 أيام ومخزون الأمان 150 وحدة. نقطة إعادة الطلب = 100 × 5 + 150 = 650 وحدة.</div>
+<p class="small">في معادلة EOQ: الطلب السنوي هو D، وتكلفة إصدار الطلب S، وتكلفة الاحتفاظ السنوية للوحدة H. المعادلة = √(2DS/H).</p>
+</section>
+
+<section class="card searchable" id="labor">
+<h2>3. قوانين الأجور</h2>
+<div class="formula">إجمالي الأجر = ساعات العمل × أجر الساعة.</div>
+<div class="formula">أجر الوقت الإضافي = ساعات إضافية × معدل الأجر الإضافي.</div>
+<div class="formula">معدل أجر الساعة = إجمالي الأجور ÷ إجمالي ساعات العمل.</div>
+<div class="formula">تكلفة ساعة العمل = إجمالي تكلفة العمالة ÷ ساعات العمل الفعلية.</div>
+<div class="formula">إنتاجية العامل = عدد الوحدات المنتجة ÷ ساعات العمل.</div>
+<div class="formula">تكلفة العمل للوحدة = إجمالي تكلفة العمل ÷ عدد الوحدات.</div>
+<div class="formula">انحراف معدل الأجر = الساعات الفعلية × (المعدل الفعلي − المعدل المعياري).</div>
+<div class="formula">انحراف كفاءة العمل = المعدل المعياري × (الساعات الفعلية − الساعات المعيارية المسموح بها).</div>
+<div class="example">مثال: عامل عمل 8 ساعات وأجر الساعة 50 جنيهًا؛ أجره = 400 جنيه. لو أنتج 40 وحدة، تكلفة الأجور للوحدة = 10 جنيهات.</div>
+</section>
+
+<section class="card searchable" id="overhead">
+<h2>4. التكاليف الصناعية غير المباشرة</h2>
+<div class="formula">إجمالي التكاليف الصناعية غير المباشرة = الثابتة + المتغيرة.</div>
+<div class="formula">معدل التحميل = التكاليف الصناعية المقدرة ÷ أساس التحميل المقدر.</div>
+<div class="formula">تكاليف الأمر المحملة = معدل التحميل × أساس التحميل الفعلي للأمر.</div>
+<div class="formula">معدل التحميل على ساعات العمل = التكاليف الصناعية المقدرة ÷ ساعات العمل المقدرة.</div>
+<div class="formula">معدل التحميل على ساعات الآلات = التكاليف الصناعية المقدرة ÷ ساعات تشغيل الآلات المقدرة.</div>
+<div class="formula">فرق التحميل = التكاليف الفعلية − التكاليف المحملة.</div>
+<div class="example">مثال: تكاليف مقدرة 120,000 جنيه وساعات مقدرة 6,000؛ معدل التحميل = 20 جنيهًا لكل ساعة. أمر استهلك 100 ساعة، فيحمل 2,000 جنيه.</div>
+</section>
+
+<section class="card searchable" id="production">
+<h2>5. الإنتاج التام وتكلفة البضاعة المباعة</h2>
+<div class="formula">تكاليف الإنتاج خلال الفترة = مواد مباشرة مستخدمة + أجور مباشرة + تكاليف صناعية غير مباشرة.</div>
+<div class="formula">تكلفة الإنتاج التام = تحت التشغيل أول المدة + تكاليف الإنتاج خلال الفترة − تحت التشغيل آخر المدة.</div>
+<div class="formula">البضاعة المتاحة للبيع = مخزون الإنتاج التام أول المدة + تكلفة الإنتاج التام.</div>
+<div class="formula">تكلفة البضاعة المباعة = البضاعة المتاحة للبيع − مخزون الإنتاج التام آخر المدة.</div>
+<div class="formula">تكلفة الوحدة التامة = تكلفة الإنتاج التام ÷ عدد الوحدات التامة.</div>
+<div class="example">مثال: تكاليف الإنتاج 50,000، وتحت التشغيل أول المدة 5,000 وآخر المدة 3,000. تكلفة الإنتاج التام = 52,000 جنيه.</div>
+</section>
+
+<section class="card searchable" id="systems">
+<h2>6. تكاليف الأوامر والمراحل الإنتاجية</h2>
+<h3>تكاليف الأوامر</h3>
+<div class="formula">تكلفة الأمر = مواد مباشرة + أجور مباشرة + تكاليف صناعية محملة.</div>
+<div class="formula">تكلفة وحدة الأمر = إجمالي تكلفة الأمر ÷ عدد الوحدات التامة.</div>
+<h3>تكاليف المراحل</h3>
+<div class="formula">الوحدات المكافئة للتحويل = الوحدات تحت التشغيل × نسبة إتمام التحويل.</div>
+<div class="formula">تكلفة الوحدة المكافئة للمواد = تكلفة المواد ÷ الوحدات المكافئة للمواد.</div>
+<div class="formula">تكلفة الوحدة المكافئة للتحويل = تكلفة التحويل ÷ الوحدات المكافئة للتحويل.</div>
+<div class="example">مثال: 100 وحدة تحت التشغيل بنسبة إتمام تحويل 50%؛ الوحدات المكافئة للتحويل = 50 وحدة مكافئة.</div>
+<p class="small">تختلف التفاصيل حسب طريقة المتوسط المرجح أو FIFO وتوقيت إضافة المواد.</p>
+</section>
+
+<section class="card searchable" id="breakeven">
+<h2>7. التكاليف الثابتة والمتغيرة ونقطة التعادل</h2>
+<div class="formula">هامش المساهمة للوحدة = سعر البيع − التكلفة المتغيرة للوحدة.</div>
+<div class="formula">إجمالي هامش المساهمة = المبيعات − إجمالي التكاليف المتغيرة.</div>
+<div class="formula">نسبة هامش المساهمة = هامش المساهمة ÷ المبيعات × 100%.</div>
+<div class="formula">نقطة التعادل بالوحدات = التكاليف الثابتة ÷ هامش المساهمة للوحدة.</div>
+<div class="formula">نقطة التعادل بالمبيعات = التكاليف الثابتة ÷ نسبة هامش المساهمة.</div>
+<div class="formula">الربح التشغيلي = إجمالي هامش المساهمة − التكاليف الثابتة.</div>
+<div class="formula">وحدات الربح المستهدف = (التكاليف الثابتة + الربح المستهدف) ÷ هامش المساهمة للوحدة.</div>
+<div class="formula">مبيعات الربح المستهدف = (التكاليف الثابتة + الربح المستهدف) ÷ نسبة هامش المساهمة.</div>
+<div class="formula">هامش الأمان = المبيعات الفعلية − مبيعات التعادل.</div>
+<div class="formula">نسبة هامش الأمان = هامش الأمان ÷ المبيعات الفعلية × 100%.</div>
+<div class="example">مثال: سعر البيع 100، والتكلفة المتغيرة 60، والثابتة 20,000 جنيه. هامش المساهمة 40 جنيهًا، والتعادل 500 وحدة أو 50,000 جنيه. لربح مستهدف 12,000 جنيه، نحتاج 800 وحدة.</div>
+</section>
+
+<section class="card searchable" id="budget">
+<h2>8. الموازنات التخطيطية</h2>
+<div class="formula">المبيعات المقدرة = الوحدات المتوقع بيعها × سعر البيع.</div>
+<div class="formula">الإنتاج المطلوب = المبيعات المقدرة + مخزون آخر المدة المستهدف − مخزون أول المدة.</div>
+<div class="formula">المواد المطلوبة للإنتاج = وحدات الإنتاج × كمية المواد للوحدة.</div>
+<div class="formula">مشتريات المواد = احتياج الإنتاج + مخزون المواد المستهدف آخر المدة − مخزون أول المدة.</div>
+<div class="formula">ساعات العمل المطلوبة = وحدات الإنتاج × ساعات العمل للوحدة.</div>
+<div class="formula">تكلفة العمالة المقدرة = ساعات العمل المطلوبة × معدل الأجر.</div>
+<div class="formula">النقدية آخر المدة = النقدية أول المدة + المقبوضات − المدفوعات.</div>
+<div class="example">مثال: مبيعات 1,000 وحدة، ومخزون مستهدف 200، ومخزون أول المدة 100. الإنتاج المطلوب = 1,100 وحدة.</div>
+</section>
+
+<section class="card searchable" id="variance">
+<h2>9. التكاليف المعيارية والانحرافات</h2>
+<div class="formula">انحراف سعر المواد = الكمية الفعلية × (السعر الفعلي − السعر المعياري).</div>
+<div class="formula">انحراف كمية المواد = السعر المعياري × (الكمية الفعلية − الكمية المعيارية المسموح بها).</div>
+<div class="formula">انحراف معدل الأجر = الساعات الفعلية × (المعدل الفعلي − المعياري).</div>
+<div class="formula">انحراف كفاءة العمل = المعدل المعياري × (الساعات الفعلية − الساعات المعيارية المسموح بها).</div>
+<div class="formula">انحراف الإنفاق للتكاليف المتغيرة = التكلفة المتغيرة الفعلية − التكلفة المسموح بها وفق الساعات الفعلية.</div>
+<div class="formula">انحراف كفاءة التكاليف المتغيرة = المعدل المعياري × (الساعات الفعلية − الساعات المعيارية المسموح بها).</div>
+<div class="formula">الانحراف الكلي للمواد = تكلفة المواد الفعلية − تكلفتها المعيارية المسموح بها.</div>
+<div class="formula">الانحراف الكلي للأجور = تكلفة الأجور الفعلية − تكلفتها المعيارية المسموح بها.</div>
+<div class="example">مثال: المعيار 2 كجم للوحدة بسعر 10 جنيهات. الإنتاج 100 وحدة، والاستهلاك الفعلي 220 كجم بسعر 12 جنيهًا. انحراف السعر = 440 جنيهًا غير ملائم، وانحراف الكمية = 200 جنيه غير ملائم، والإجمالي = 640 جنيهًا غير ملائم.</div>
+</section>
+
+<section class="card searchable" id="abc">
+<h2>10. التكاليف على أساس الأنشطة ABC</h2>
+<div class="formula">معدل تكلفة النشاط = تكلفة مجمع النشاط ÷ إجمالي محرك التكلفة.</div>
+<div class="formula">تكلفة النشاط للمنتج = معدل النشاط × استهلاك المنتج لمحرك التكلفة.</div>
+<div class="formula">تكلفة المنتج = المواد المباشرة + الأجور المباشرة + تكاليف الأنشطة المخصصة.</div>
+<div class="formula">تكلفة الوحدة وفق ABC = إجمالي تكلفة المنتج ÷ عدد الوحدات.</div>
+<div class="example">مثال: تكلفة الفحص 12,000 جنيه و600 فحص؛ معدل الفحص 20 جنيهًا. منتج احتاج 30 فحصًا، فيُحمّل 600 جنيه.</div>
+</section>
+
+<section class="card searchable" id="valuation">
+<h2>11. تقييم المخزون</h2>
+<div class="formula">تكلفة المخزون المتاح = مخزون أول المدة + صافي المشتريات.</div>
+<div class="formula">المتوسط المرجح الدوري = إجمالي تكلفة الوحدات المتاحة ÷ إجمالي كمياتها.</div>
+<div class="formula">متوسط التكلفة المتحرك = (قيمة المخزون قبل الشراء + قيمة المشتريات) ÷ (الكمية قبل الشراء + كمية المشتريات).</div>
+<div class="formula">تكلفة البضاعة المباعة = تكلفة البضاعة المتاحة للبيع − تكلفة مخزون آخر المدة.</div>
+<p>FIFO: الوارد أولًا صادر أولًا، أي تحميل الوحدات المباعة بتكلفة أقدم الوحدات المتاحة.</p>
+<div class="example">مثال: 100 وحدة بسعر 10 جنيهات، ثم 100 وحدة بسعر 12 جنيهًا. المتوسط المرجح = 11 جنيهًا. لو تبقى 50 وحدة، فقيمتها = 550 جنيهًا.</div>
+</section>
+
+<section class="card searchable" id="joint">
+<h2>12. المنتجات المشتركة والثانوية</h2>
+<div class="formula">تكلفة الإنتاج المشترك = مجموع تكاليف الإنتاج حتى نقطة الانفصال.</div>
+<div class="formula">التوزيع وفق الكمية = التكلفة المشتركة × نسبة كمية المنتج لإجمالي الكميات.</div>
+<div class="formula">التوزيع وفق قيمة البيع = التكلفة المشتركة × نسبة قيمة مبيعات المنتج إلى إجمالي قيمة المبيعات.</div>
+<div class="formula">صافي القيمة القابلة للتحقق = سعر البيع النهائي − تكاليف الإكمال − تكاليف البيع.</div>
+<div class="formula">تكلفة المنتج بعد الانفصال = نصيبه من التكلفة المشتركة + تكاليف المعالجة الإضافية.</div>
+<div class="formula">صافي عائد المنتج الثانوي = إيراد المنتج الثانوي − التكاليف الإضافية المتعلقة به.</div>
+<div class="example">مثال: تكلفة مشتركة 30,000 جنيه توزع بنسبة 60% و40%؛ نصيب المنتج الأول 18,000 والثاني 12,000 جنيه.</div>
+</section>
+
+<section class="card searchable" id="decisions">
+<h2>13. القرارات الإدارية</h2>
+<div class="formula">التكلفة التفاضلية = تكلفة البديل الأول − تكلفة البديل الثاني.</div>
+<div class="formula">الربح الإضافي لطلب خاص = الإيراد الإضافي − التكلفة الإضافية.</div>
+<div class="formula">تكلفة الفرصة البديلة = المنفعة المتروكة من أفضل بديل آخر.</div>
+<div class="formula">تكلفة الشراء الخارجي = سعر الشراء + التكاليف الإضافية ذات الصلة.</div>
+<div class="formula">تكلفة التصنيع ذات الصلة = التكاليف التي يمكن تجنبها عند التوقف عن التصنيع.</div>
+<div class="formula">قرار إيقاف منتج = مقارنة التكاليف القابلة للتجنب بهامش المساهمة المفقود.</div>
+<div class="example">مثال: طلب خاص 500 وحدة بسعر 70 جنيهًا، وتكلفة متغيرة 50 جنيهًا للوحدة، والتكاليف الثابتة لن تتغير. الربح الإضافي = 500 × 20 = 10,000 جنيه، إذا وجدت طاقة فائضة ولا توجد آثار سلبية أخرى.</div>
+</section>
+
+<section class="card searchable" id="pricing">
+<h2>14. التسعير والربحية</h2>
+<div class="formula">الإيرادات = سعر البيع × الكمية المباعة.</div>
+<div class="formula">مجمل الربح = صافي المبيعات − تكلفة البضاعة المباعة.</div>
+<div class="formula">هامش مجمل الربح = مجمل الربح ÷ صافي المبيعات × 100%.</div>
+<div class="formula">الربح التشغيلي = مجمل الربح − المصروفات التشغيلية.</div>
+<div class="formula">هامش الربح التشغيلي = الربح التشغيلي ÷ صافي المبيعات × 100%.</div>
+<div class="formula">Markup = (سعر البيع − التكلفة) ÷ التكلفة × 100%.</div>
+<div class="formula">سعر البيع مع زيادة على التكلفة = التكلفة × (1 + نسبة الزيادة).</div>
+<div class="formula">سعر البيع بهامش ربح مستهدف = التكلفة ÷ (1 − هامش الربح المستهدف).</div>
+<div class="example">مثال: التكلفة 80 جنيهًا. زيادة 25% على التكلفة تعطي سعرًا 100 جنيه. أما هامش ربح 25% من سعر البيع فيعطي 80 ÷ 0.75 = 106.67 جنيه تقريبًا.</div>
+</section>
+
+<section class="card searchable" id="control">
+<h2>15. الرقابة على التكاليف والإنتاجية</h2>
+<div class="formula">استغلال الطاقة = الإنتاج الفعلي ÷ الطاقة المتاحة × 100%.</div>
+<div class="formula">معدل الإنتاجية = المخرجات ÷ المدخلات.</div>
+<div class="formula">معدل الهالك = كمية الهالك ÷ إجمالي المواد الداخلة × 100%.</div>
+<div class="formula">نسبة الوحدات المعيبة = الوحدات المعيبة ÷ إجمالي الوحدات المنتجة × 100%.</div>
+<div class="formula">معدل العائد الجيد = الوحدات السليمة ÷ إجمالي الوحدات المنتجة × 100%.</div>
+<div class="formula">انحراف التكلفة = التكلفة الفعلية − التكلفة المعيارية أو الموازنة المقارنة.</div>
+<div class="formula">نسبة الانحراف = الانحراف ÷ القيمة المعيارية المقارنة × 100%.</div>
+<div class="formula">العائد على الاستثمار ROI = الربح التشغيلي ÷ متوسط الاستثمار × 100%.</div>
+</section>
+
+<section class="card searchable">
+<h2>ترتيب مقترح للمذاكرة</h2>
+<ol>
+<li>تكلفة الإنتاج وتكلفة الوحدة.</li>
+<li>المواد المستخدمة ومراقبة المخازن.</li>
+<li>الأجور وساعات العمل والإنتاجية.</li>
+<li>تحميل التكاليف الصناعية غير المباشرة.</li>
+<li>تكلفة الإنتاج التام والبضاعة المباعة.</li>
+<li>نقطة التعادل وهامش المساهمة.</li>
+<li>الموازنات التخطيطية.</li>
+<li>الانحرافات المعيارية.</li>
+<li>تقييم المخزون وحساب الهالك.</li>
+<li>ربحية المنتجات والقرارات الإدارية.</li>
+</ol>
+<p class="note">المعادلات تعليمية، وقد تختلف التفاصيل حسب نظام التكاليف وسياسة الشركة. في حساب المخزون استخدم نفس وحدة القياس والفترة الزمنية.</p>
+</section>
+</div>
+
+<footer>دليل محاسبة التكاليف | مرجع تعليمي</footer>
+
+<script>
+function val(id){return Number(document.getElementById(id).value)}
+function fmt(n){return n.toLocaleString('en-US',{maximumFractionDigits:2})}
+function duration(){
+ let s=val('stock'),u=val('dailyUse');
+ document.getElementById('r1').textContent=
+ s>=0&&u>0?'مدة كفاية المخزون = '+fmt(s/u)+' يومًا.':'أدخل مخزونًا غير سالب واستهلاكًا أكبر من صفر.';
+}
+function averageUse(){
+ let q=val('used'),d=val('days');
+ document.getElementById('r2').textContent=
+ q>=0&&d>0?'متوسط الاستهلاك = '+fmt(q/d)+' وحدة يوميًا.':'أدخل بيانات صحيحة.';
+}
+function reorder(){
+ let d=val('demand'),l=val('lead'),s=val('safety');
+ let md=val('maxDemand'),ml=val('maxLead');
+ if(d<0||l<0||s<0){
+ document.getElementById('r3').textContent='القيم لا يمكن أن تكون سالبة.';return;
+ }
+ let basic=d*l,point=basic+s;
+ let msg='الاستهلاك خلال التوريد = '+fmt(basic)+' وحدة.\\nنقطة إعادة الطلب مع مخزون الأمان = '+fmt(point)+' وحدة.';
+ if(md>=d&&ml>=l&&md>0&&ml>0){
+ let safetyCalc=Math.max(0,md*ml-d*l);
+ msg+='\\nمخزون الأمان التقديري بطريقة الحد الأقصى = '+fmt(safetyCalc)+' وحدة.';
+ msg+='\\nنقطة إعادة الطلب وفق هذه الطريقة = '+fmt(basic+safetyCalc)+' وحدة.';
+ }
+ document.getElementById('r3').textContent=msg;
+}
+function safetyDuration(){
+ let s=val('safetyQty'),u=val('safetyUse');
+ document.getElementById('r4').textContent=
+ s>=0&&u>0?'فترة الأمان = '+fmt(s/u)+' يومًا.':'أدخل بيانات صحيحة.';
+}
+function searchSections(){
+ let q=document.getElementById('search').value.toLowerCase().trim();
+ document.querySelectorAll('.searchable').forEach(el=>{
+ el.style.display=el.innerText.toLowerCase().includes(q)?'':'none';
+ });
+}
+duration();averageUse();reorder();safetyDuration();
+</script>
+</body>
+</html>
